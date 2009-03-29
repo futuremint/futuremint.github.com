@@ -1,13 +1,17 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head>
-    <title>futuremint</title>
-    <style type="text/css" media="screen">
-      body{background: #fff; margin:0; padding:0}
-    </style>
-  </head>
-  <body>
-    <img src="images/logo.jpg" alt="Futuremint" />
-  </body>
-</html>
+---
+layout: default
+title: futuremint
+---
 
+<div id="body">
+  <ul id="posts">
+  {% for post in site.posts %}
+    <li>
+      <h2>{{ post.title }}</h2>
+      <div class="meta">
+        {{ post.date | date_to_string }}
+      </div>
+      <div class="body">{{ post.content }}</div>
+    </li>
+  {% endfor %}
+</div>
