@@ -6,12 +6,14 @@ title: futuremint
 <div id="body">
   <ul id="posts">
   {% for post in site.posts %}
-    <li>
-      <h2>{{ post.title }}</h2>
-      <div class="meta">
-        {{ post.date | date_to_string }}
-      </div>
-      <div class="body">{{ post.content }}</div>
-    </li>
+    {% if post.published %}
+      <li>
+        <h2>{{ post.title }}</h2>
+        <div class="meta">
+          {{ post.date | date_to_string }}
+        </div>
+        <div class="body">{{ post.content }}</div>
+      </li>
+    {% endif %}
   {% endfor %}
 </div>
