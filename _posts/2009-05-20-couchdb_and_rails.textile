@@ -1,0 +1,79 @@
+---
+published: true
+layout: post
+title: Thinking about CouchDB and Rails
+---
+
+I'd like to clarify that I have yet to build a Rails application using
+CouchDB.  However I have been spending a lot of time learning about
+how it is different, and thinking about how to use it.
+
+So CouchDB is "schema-less".  That means if you store relational data
+in it, all of the relations of the data need to be maintained in the
+application layer.
+
+However, Rails' ActiveRecord ORM layer ignores foreign-key constraints
+and stored views anyway.  These are typically touted as strengths of
+RDBMSes.  Currently a typucal tree structure would be entirely
+maintained within the application layer of Rails, maybe using
+awesome_nested_set.  It uses foreign keys to relate the various
+tables, but the database (typically MySQL) itself has no constraints setup on
+this data.  It does however leverage the RDBMS's power to express
+"sets" of data, and join data from a cross-section of tables together
+all on one query. Typically this is where the "power" of a RDBMS would
+be leveraged, however Rails' AR doesn't use this very well, and
+sets up all of the associations in memory after loading the data.
+
+Lately I've been making Rails take data from the database and convert
+it into strings in JSON format, and then returning that to the
+browser.  The big attraction of CouchDB is its interface over HTTP,
+and how it returns data as a JSON string straight from the database.
+That makes developers go, "Holy cow!  That's awesome! I can just point
+the browser at the database and I don't have to mess with .to_json
+calls all over my controllers!"  However there are still security & authorization
+considerations in any reasonable business application.
+
+But, the reality of CouchDB is more subtle.  An application layer is
+still needed to maintain typical business logic.  CouchDB's existing
+authorization mechanisms are pretty weak.  And CouchDB only talks over
+HTTP.  Therefore, we still need Rails (for now), and Rails would be
+talking to its datastore over HTTP, which is slower than a direct UNIX
+socket connection.  A change in attributes of a CouchDB document still
+requires the Ruby code in memory to be reloaded.  This means a restart
+just like a normal deploy with migrations.  Most of the Rails adapters
+I've looked at for CouchDB try to work similarly to the way
+ActiveRecords works.  They add a "type" field to your documents, so
+that you can pull out all of the documents of the same type.  This
+is effectively the same thing as a table.  Most provide associations
+between documents, and maintain all of the foreign keys for you, just
+like ActiveRecord.
+
+To really leverage CouchDB well in a Rails application, a lot of
+thought needs to be put into how we can leverage CouchDB's unique
+features to build the application.  A developer no longer needs to set
+everything up as "models" with "associations".  CouchDB has a very
+powerful Map/Reduce based query mechanism which is nothing like a SQL
+query.  This has to be taken into consideration too.  The different
+queries for data are actually kept in CouchDB as Javascript functions
+that emit data instead of using SQL.  I think using this technology
+properly and in the way intended (instead of bending it to "The Rails
+Way") would look a lot different than most people realize.
+
+I suppose when one developer on a team makes database changes, the
+other devs would just replicate the CouchDB down when they pull in
+code changes from git or subversion.
+
+CouchDB can be really good for rapid application development, because
+we don't have to simultaneously maintain a database schema (stored in
+Rails migrations).  This is probably the biggest attraction of CouchDB
+to us web developers: we can just throw new stuff into an 'object' (a
+CouchDB 'document') as we develop and we don't have to go update all
+of the existing data in the database and change columns and run
+migrations, etc. etc.  We can change an attribute from a scaler value
+directly into a collection of values without having to bother with
+creating new tables, foreign key columns, associations, and
+migrations.  This is the thing I'm probably most excited about.
+
+But I still have no idea whatsoever how to model a domain using
+Map/Reduce instead of the typical one-model-per-table and has-many
+associations.
