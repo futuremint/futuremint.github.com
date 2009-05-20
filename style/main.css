@@ -29,14 +29,20 @@ body>h1{
 }
 
 #outro {
-  padding: 2em;
-  border-top: 1px solid #aaa;
   background: #ddd;
+  border-top: 1px solid #aaa;
+  margin-top: 2em;
+  padding: 2em;
+  padding-bottom: 3em;
 }
 
 #license {
   width: 35em;
 }
+
+a { color: #070 }
+a:visited { color: #073 }
+a:hover { color: #05a }
 
 .highlight .c{color:#998;font-style:italic;}
 .highlight .err{color:#a61717;background-color:#e3d2d2;}
